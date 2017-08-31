@@ -49,32 +49,41 @@ describe('UportRegistry contract', function () {
 
   it('Sets data correctly', done => {
     registry.set('key1', accounts[0], data1, {from: accounts[0]}).then(() => {
-      return registry.get.call('key1', accounts[0], accounts[0])
+      return registry.getOne.call('key1', accounts[0], accounts[0], 0)
     }).then(returnedBytes => {
       assert.strictEqual(returnedBytes, data1, 'should set data')
       return registry.set('key2', accounts[0], data2, {from: accounts[0]})
     }).then(() => {
-      return registry.get.call('key2', accounts[0], accounts[0])
+      return registry.getOne.call('key2', accounts[0], accounts[0], 0)
     }).then(returnedBytes => {
       assert.strictEqual(returnedBytes, data2, 'should set data')
-      return registry.get.call('key1', accounts[0], accounts[0])
+      return registry.getOne.call('key1', accounts[0], accounts[0],0)
     }).then(returnedBytes => {
       assert.strictEqual(returnedBytes, data1, 'setting data on one key should not affect other keys')
       return registry.set('key3', accounts[0], data3, {from: accounts[1]})
     }).then(() => {
-      return registry.get.call('key3', accounts[1], accounts[0])
+      return registry.getOne.call('key3', accounts[1], accounts[0],0)
     }).then(returnedBytes => {
       assert.strictEqual(returnedBytes, data3, 'should set data')
       done()
     }).catch(done)
   })
 
-  it('Should update data correctly', done => {
+  it('Should allow more than one value to the same key', done => {
     registry.set('key1', accounts[0], data4, {from: accounts[0]}).then(() => {
-      return registry.get.call('key1', accounts[0], accounts[0])
+      return registry.getOne.call('key1', accounts[0], accounts[0],1)
     }).then(returnedBytes => {
-      assert.strictEqual(returnedBytes, data4, 'should update data')
+      assert.strictEqual(returnedBytes, data4, 'should set new data')
       done()
     }).catch(done)
   })
+
+  // it('Should allow the value to be updated', done => {
+  //   registry.update('key1', accounts[0], data2, 0, {from: accounts[0]}).then(() => {
+  //     return registry.getOne.call('key1', accounts[0], accounts[0], 0)
+  //   }).then(returnedBytes => {
+  //     assert.strictEqual(returnedBytes, data2, "should update data")
+  //     done()
+  //   }).catch(done)
+  // })
 })
